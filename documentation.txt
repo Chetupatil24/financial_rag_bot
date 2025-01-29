@@ -1,0 +1,74 @@
+# Documentation for Financial Bot Colab Notebook
+
+## Overview
+The Financial Bot Colab Notebook is designed to process and analyze financial documents efficiently using Natural Language Processing (NLP) techniques. It employs FAISS for fast similarity search, SentenceTransformers for text embeddings, and pdfplumber for extracting text and tables from PDF files. This makes it ideal for document retrieval and interactive financial analysis.
+
+## Features
+- **PDF Processing**: Extracts text and tables from uploaded PDF files.
+- **Text Embedding**: Generates embeddings using `SentenceTransformers`.
+- **Document Search**: Utilizes FAISS for efficient similarity-based search.
+- **NLP Query Handling**: Implements a pipeline from Hugging Face Transformers to process user queries.
+- **Colab Integration**: Supports easy file uploads and interactive execution.
+
+## Dependencies
+To use this notebook, the following Python libraries are required:
+```python
+import faiss
+from sentence_transformers import SentenceTransformer
+import pdfplumber
+import pandas as pd
+import numpy as np
+from io import BytesIO
+from google.colab import files
+from transformers import pipeline
+```
+
+## Installation
+If running locally, install the required dependencies using:
+```bash
+pip install faiss-cpu sentence-transformers pdfplumber pandas numpy transformers
+```
+
+## How to Use
+### 1. Open the Notebook
+- Upload the notebook to Google Colab.
+- Ensure that runtime settings are configured correctly.
+
+### 2. Upload PDF Files
+- Use Google Colab’s file upload feature to add financial documents.
+
+### 3. Extract and Process Content
+- Run the cells to extract text and tables from the PDFs.
+- Generate text embeddings for document retrieval.
+
+### 4. Perform Similarity Search
+- Use FAISS to search for relevant text segments based on user queries.
+
+### 5. Query Processing with NLP
+- Run the transformers-based pipeline to answer questions based on document content.
+
+## Example Usage
+1. **Uploading a PDF**
+   ```python
+   uploaded = files.upload()
+   pdf_path = list(uploaded.keys())[0]
+   ```
+2. **Extracting Text**
+   ```python
+   with pdfplumber.open(pdf_path) as pdf:
+       text = "\n".join([page.extract_text() for page in pdf.pages if page.extract_text()])
+   ```
+3. **Generating Embeddings**
+   ```python
+   model = SentenceTransformer('all-MiniLM-L6-v2')
+   embeddings = model.encode(text)
+   ```
+4. **Performing Search**
+   ```python
+   index = faiss.IndexFlatL2(embeddings.shape[1])
+   index.add(embeddings)
+   ```
+
+## License
+This project is open-source and available under an appropriate license.
+
